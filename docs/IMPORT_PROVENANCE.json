@@ -1,0 +1,150 @@
+{
+  "import_date": "2026-10-18",
+  "note": "Originals and source mappings remain local. Public configuration edits are described in README.",
+  "files": [
+    {
+      "path": "legacy/windows-v0.1/app.py",
+      "source_group": "LocalAIClient_v0.1",
+      "published_sha256": "92de1e84f581bd37e7ecf3a0de236dbbaeb40f48086a452be4e4a6cf793e1050",
+      "source_sha256": "92de1e84f581bd37e7ecf3a0de236dbbaeb40f48086a452be4e4a6cf793e1050"
+    },
+    {
+      "path": "legacy/windows-v0.1/build_exe.bat",
+      "source_group": "LocalAIClient_v0.1",
+      "published_sha256": "6196d3a7969846d43eb6fddfaaef29b2be67e61055fdb9e44fd74e501f27026f",
+      "source_sha256": "6196d3a7969846d43eb6fddfaaef29b2be67e61055fdb9e44fd74e501f27026f"
+    },
+    {
+      "path": "legacy/windows-v0.1/config.py",
+      "source_group": "LocalAIClient_v0.1",
+      "published_sha256": "8de5bf528b152455b370e06f1c1ad2f4a65a731ac1218585d0227d4c7eaf3e86",
+      "source_sha256": "8de5bf528b152455b370e06f1c1ad2f4a65a731ac1218585d0227d4c7eaf3e86"
+    },
+    {
+      "path": "legacy/windows-v0.1/README.md",
+      "source_group": "LocalAIClient_v0.1",
+      "published_sha256": "b9d36dbb0df3770d149ccf326ec283aebc1d934e3edea713e40708848a8e5000",
+      "source_sha256": "b9d36dbb0df3770d149ccf326ec283aebc1d934e3edea713e40708848a8e5000"
+    },
+    {
+      "path": "legacy/windows-v0.1/requirements-build.txt",
+      "source_group": "LocalAIClient_v0.1",
+      "published_sha256": "4b3c8286494bf6f38e4b5ef90bb14d4d52248a8058aa5ff9df24f5c5fd732842",
+      "source_sha256": "4b3c8286494bf6f38e4b5ef90bb14d4d52248a8058aa5ff9df24f5c5fd732842"
+    },
+    {
+      "path": "legacy/windows-v0.1/requirements.txt",
+      "source_group": "LocalAIClient_v0.1",
+      "published_sha256": "ee52a77ad9234f6038460a2b6cdfff92ba509d6381129ef2ce9f1d41ece2b84a",
+      "source_sha256": "ee52a77ad9234f6038460a2b6cdfff92ba509d6381129ef2ce9f1d41ece2b84a"
+    },
+    {
+      "path": "legacy/windows-v0.1/run.bat",
+      "source_group": "LocalAIClient_v0.1",
+      "published_sha256": "1fa250ef65c8bb1997ac57454f27d52b8230edf7f69541b0145139a19029d488",
+      "source_sha256": "1fa250ef65c8bb1997ac57454f27d52b8230edf7f69541b0145139a19029d488"
+    },
+    {
+      "path": "legacy/windows-v0.1/ssh_tools.py",
+      "source_group": "LocalAIClient_v0.1",
+      "published_sha256": "b5ba1a467b510febec09613e3d7650eccfa5eb714fdc95500ad6a0a45b9ef1ac",
+      "source_sha256": "b5ba1a467b510febec09613e3d7650eccfa5eb714fdc95500ad6a0a45b9ef1ac"
+    },
+    {
+      "path": "legacy/windows-v0.1/storage.py",
+      "source_group": "LocalAIClient_v0.1",
+      "published_sha256": "b034bef82a56ac8f5a1a845cbee896f98824a7e59a97c31eae67a30001cf3a86",
+      "source_sha256": "b034bef82a56ac8f5a1a845cbee896f98824a7e59a97c31eae67a30001cf3a86"
+    },
+    {
+      "path": "legacy/windows-v0.1/workers.py",
+      "source_group": "LocalAIClient_v0.1",
+      "published_sha256": "a78e1242c52ff8d969eb2f8be5d7c2cc93abcf3e0e82cc19beb1080281e9fe04",
+      "source_sha256": "a78e1242c52ff8d969eb2f8be5d7c2cc93abcf3e0e82cc19beb1080281e9fe04"
+    },
+    {
+      "path": "legacy/windows-v0.2/app.py",
+      "source_group": "LocalAIClient_v0.2",
+      "published_sha256": "1ebf80bd916d68103013db77f5191a9fc48da7f6650b54da5e96df2dd0da373f",
+      "source_sha256": "1ebf80bd916d68103013db77f5191a9fc48da7f6650b54da5e96df2dd0da373f"
+    },
+    {
+      "path": "legacy/windows-v0.2/build_exe.bat",
+      "source_group": "LocalAIClient_v0.2",
+      "published_sha256": "6196d3a7969846d43eb6fddfaaef29b2be67e61055fdb9e44fd74e501f27026f",
+      "source_sha256": "6196d3a7969846d43eb6fddfaaef29b2be67e61055fdb9e44fd74e501f27026f"
+    },
+    {
+      "path": "legacy/windows-v0.2/config.py",
+      "source_group": "LocalAIClient_v0.2",
+      "published_sha256": "8de5bf528b152455b370e06f1c1ad2f4a65a731ac1218585d0227d4c7eaf3e86",
+      "source_sha256": "8de5bf528b152455b370e06f1c1ad2f4a65a731ac1218585d0227d4c7eaf3e86"
+    },
+    {
+      "path": "legacy/windows-v0.2/README.md",
+      "source_group": "LocalAIClient_v0.2",
+      "published_sha256": "20a8cf6f9316af14aea51b09ac1cc7b202d33e48badcaee4b192ac6c63974b5d",
+      "source_sha256": "20a8cf6f9316af14aea51b09ac1cc7b202d33e48badcaee4b192ac6c63974b5d"
+    },
+    {
+      "path": "legacy/windows-v0.2/requirements-build.txt",
+      "source_group": "LocalAIClient_v0.2",
+      "published_sha256": "4b3c8286494bf6f38e4b5ef90bb14d4d52248a8058aa5ff9df24f5c5fd732842",
+      "source_sha256": "4b3c8286494bf6f38e4b5ef90bb14d4d52248a8058aa5ff9df24f5c5fd732842"
+    },
+    {
+      "path": "legacy/windows-v0.2/requirements.txt",
+      "source_group": "LocalAIClient_v0.2",
+      "published_sha256": "ee52a77ad9234f6038460a2b6cdfff92ba509d6381129ef2ce9f1d41ece2b84a",
+      "source_sha256": "ee52a77ad9234f6038460a2b6cdfff92ba509d6381129ef2ce9f1d41ece2b84a"
+    },
+    {
+      "path": "legacy/windows-v0.2/run.bat",
+      "source_group": "LocalAIClient_v0.2",
+      "published_sha256": "1fa250ef65c8bb1997ac57454f27d52b8230edf7f69541b0145139a19029d488",
+      "source_sha256": "1fa250ef65c8bb1997ac57454f27d52b8230edf7f69541b0145139a19029d488"
+    },
+    {
+      "path": "legacy/windows-v0.2/ssh_tools.py",
+      "source_group": "LocalAIClient_v0.2",
+      "published_sha256": "f744214a0275c8eeebb54ca7d29b8583096bd30ad5aa673fd3b38130ac7907a6",
+      "source_sha256": "f744214a0275c8eeebb54ca7d29b8583096bd30ad5aa673fd3b38130ac7907a6"
+    },
+    {
+      "path": "legacy/windows-v0.2/storage.py",
+      "source_group": "LocalAIClient_v0.2",
+      "published_sha256": "b034bef82a56ac8f5a1a845cbee896f98824a7e59a97c31eae67a30001cf3a86",
+      "source_sha256": "b034bef82a56ac8f5a1a845cbee896f98824a7e59a97c31eae67a30001cf3a86"
+    },
+    {
+      "path": "legacy/windows-v0.2/workers.py",
+      "source_group": "LocalAIClient_v0.2",
+      "published_sha256": "a78e1242c52ff8d969eb2f8be5d7c2cc93abcf3e0e82cc19beb1080281e9fe04",
+      "source_sha256": "a78e1242c52ff8d969eb2f8be5d7c2cc93abcf3e0e82cc19beb1080281e9fe04"
+    },
+    {
+      "path": "legacy/mobile-v0.1/app.py",
+      "source_group": "MobileAI_v0.1",
+      "published_sha256": "527db72a4e13fb8223d41be56616072fb5eaa8d1606f5f2b4e72c2a4b111d10e",
+      "source_sha256": "527db72a4e13fb8223d41be56616072fb5eaa8d1606f5f2b4e72c2a4b111d10e"
+    },
+    {
+      "path": "legacy/mobile-v0.1/install.sh",
+      "source_group": "MobileAI_v0.1",
+      "published_sha256": "f7ded2d8a06d55b484ce009044f58b768a6031fdcab205f4cfb96b043ccb1636",
+      "source_sha256": "f7ded2d8a06d55b484ce009044f58b768a6031fdcab205f4cfb96b043ccb1636"
+    },
+    {
+      "path": "legacy/mobile-v0.1/README.md",
+      "source_group": "MobileAI_v0.1",
+      "published_sha256": "47fbfddff034133c345db26dadf87bdf672a985aae6ce7390d0b911d5f1d9994",
+      "source_sha256": "47fbfddff034133c345db26dadf87bdf672a985aae6ce7390d0b911d5f1d9994"
+    },
+    {
+      "path": "legacy/mobile-v0.1/requirements.txt",
+      "source_group": "MobileAI_v0.1",
+      "published_sha256": "74a15e334e96cb63388602e2d6cef6378d8e2e3e54b8b1ea5936c1f887563f86",
+      "source_sha256": "74a15e334e96cb63388602e2d6cef6378d8e2e3e54b8b1ea5936c1f887563f86"
+    }
+  ]
+}

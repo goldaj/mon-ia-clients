@@ -28,3 +28,7 @@ Aucune clé SSH, adresse privée de machine ni secret ne doit être versionné. 
 ## Compétences mises en œuvre
 
 Prototypage multi-support, intégration d'API, interface conversationnelle, architecture client/serveur et gestion d'environnements.
+
+## Archives complémentaires
+
+Les itérations Windows v0.1/v0.2 et Mobile v0.1 sont conservées dans `legacy/` à titre de provenance et d’exploration. Elles ne remplacent pas les versions `windows/` et `mobile/`. Les paramètres SSH personnels et les clés restent dans la configuration locale ; les valeurs de connexion par défaut des archives sont vides ou génériques. La compilation et les connexions de ces anciennes versions restent à vérifier.
