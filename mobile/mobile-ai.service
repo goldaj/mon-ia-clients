@@ -1,0 +1,18 @@
+[Unit]
+Description=Mobile AI Web Client
+After=network.target local-ai.service
+Requires=local-ai.service
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/mobile-ai
+ExecStart=/home/ubuntu/mobile-ai/.venv/bin/uvicorn app:app --host 127.0.0.1 --port 8090
+Restart=on-failure
+RestartSec=5
+Nice=5
+CPUWeight=30
+
+[Install]
+WantedBy=multi-user.target

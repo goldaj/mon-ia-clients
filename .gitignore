@@ -1,0 +1,26 @@
+# Sécurité - ne pas versionner de secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.tfvars
+*.tfstate*
+keystore.properties
+local.properties
+credentials.json
+token.json
+id_rsa
+id_ed25519
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+.gradle/
+build/
+dist/
+.terraform/
