@@ -19,7 +19,9 @@ Collection de clients développés pour piloter un assistant IA à distance, ave
 
 ## Démarrage
 
-Les dépendances et instructions propres à chaque cible figurent dans les sous-dossiers après import des sources. Les composants ne sont pas destinés à la production en l'état et nécessitent une instance de backend accessible.
+Pour Windows, utiliser `windows/run.bat` après configuration du serveur et de la connexion SSH ; voir [le guide Windows](windows/README.md). Le packaging est décrit dans ce même guide. Pour la cible PWA/service, consulter [le guide mobile](mobile/README.md) et adapter l'installation à son propre serveur. Les dépendances figurent dans les fichiers `requirements.txt` de chaque cible.
+
+Les composants sont des prototypes et nécessitent un backend accessible et des paramètres privés locaux ; cette revue documentaire ne valide ni une connexion réelle ni un déploiement de production.
 
 ## Sécurité
 
