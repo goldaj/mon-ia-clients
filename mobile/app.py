@@ -11,8 +11,13 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response, StreamingResponse
 from pydantic import BaseModel, Field
 
-from mobile.agent_process import (AgentDisconnected, AgentOutputLimit,
-                                  AgentTimeout, run_agent_process)
+# uvicorn app:app from mobile/ and import mobile.app in tests both supported.
+if __package__:
+    from .agent_process import (AgentDisconnected, AgentOutputLimit,
+                                AgentTimeout, run_agent_process)
+else:
+    from agent_process import (AgentDisconnected, AgentOutputLimit,
+                               AgentTimeout, run_agent_process)
 
 LOG = logging.getLogger(__name__)
 AGENT_SLOTS = asyncio.Semaphore(2)
