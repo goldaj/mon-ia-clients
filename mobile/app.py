@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 import time
 import uuid
 from pathlib import Path
@@ -9,6 +10,12 @@ import psutil
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response, StreamingResponse
 from pydantic import BaseModel, Field
+
+from mobile.agent_process import (AgentDisconnected, AgentOutputLimit,
+                                  AgentTimeout, run_agent_process)
+
+LOG = logging.getLogger(__name__)
+AGENT_SLOTS = asyncio.Semaphore(2)
 
 LLAMA_URL = "http://127.0.0.1:8080/v1/chat/completions"
 MODEL = "lfm-thinking"
@@ -28,9 +35,10 @@ class FastRequest(BaseModel):
 
 
 class AgentRequest(BaseModel):
-    message: str
+    message: str = Field(min_length=1, max_length=8192)
     session_key: str = Field(
-        default_factory=lambda: "mobile-" + uuid.uuid4().hex[:24]
+        default_factory=lambda: "mobile-" + uuid.uuid4().hex[:24],
+        min_length=1, max_length=80, pattern=r"^[A-Za-z0-9_-]+$",
     )
 
 
@@ -128,8 +136,9 @@ async def chat_fast(req: FastRequest):
                             yield chunk
         except asyncio.CancelledError:
             raise
-        except Exception as exc:
-            yield f"\n\n[Erreur: {exc}]"
+        except Exception:
+            LOG.warning("Fast model stream failed; details are not sent to browser")
+            yield "\n\n[Erreur du modèle local : réessayez.]"
 
     return StreamingResponse(generate(), media_type="text/plain; charset=utf-8")
 
@@ -137,71 +146,49 @@ async def chat_fast(req: FastRequest):
 @app.post("/api/chat/agent")
 async def chat_agent(req: AgentRequest, request: Request):
     if not Path(OPENCLAW).exists():
-        raise HTTPException(500, "OpenClaw introuvable sur le serveur.")
+        raise HTTPException(503, "OpenClaw introuvable sur le serveur.")
+    if not req.message.strip():
+        raise HTTPException(400, "Le message ne doit pas être vide.")
 
-    safe_session = "".join(
-        c for c in req.session_key if c.isalnum() or c in "-_"
-    )[:80] or ("mobile-" + uuid.uuid4().hex[:24])
-
-    started = time.perf_counter()
-    proc = await asyncio.create_subprocess_exec(
-        OPENCLAW,
-        "agent",
-        "--agent",
-        OPENCLAW_AGENT,
-        "--session-key",
-        safe_session,
-        "--message",
-        req.message,
-        "--timeout",
-        "900",
-        "--json",
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
+    command = (
+        OPENCLAW, "agent", "--agent", OPENCLAW_AGENT,
+        "--session-key", req.session_key,
+        "--message", req.message, "--timeout", "900", "--json",
     )
 
-    deadline = time.monotonic() + 930
     try:
-        while proc.returncode is None:
-            if await request.is_disconnected():
-                proc.terminate()
-                try:
-                    await asyncio.wait_for(proc.wait(), timeout=3)
-                except asyncio.TimeoutError:
-                    proc.kill()
-                    await proc.wait()
-                raise asyncio.CancelledError()
+        await asyncio.wait_for(AGENT_SLOTS.acquire(), timeout=10)
+    except asyncio.TimeoutError as exc:
+        raise HTTPException(503, "Trop de requêtes Agent en cours.") from exc
 
-            if time.monotonic() > deadline:
-                proc.kill()
-                await proc.wait()
-                raise HTTPException(504, "OpenClaw a dépassé le délai maximum.")
-
-            try:
-                await asyncio.wait_for(proc.wait(), timeout=0.5)
-            except asyncio.TimeoutError:
-                pass
-
-        stdout, stderr = await proc.communicate()
-    except asyncio.CancelledError:
-        if proc.returncode is None:
-            proc.terminate()
-        raise
-
-    stdout = stdout.decode("utf-8", errors="replace").strip()
-    stderr = stderr.decode("utf-8", errors="replace").strip()
-
-    if proc.returncode != 0:
-        raise HTTPException(500, stderr or stdout or "Erreur OpenClaw")
-
+    started = time.perf_counter()
     try:
-        data = json.loads(stdout)
-    except json.JSONDecodeError:
-        a, b = stdout.find("{"), stdout.rfind("}")
-        if a >= 0 and b > a:
-            data = json.loads(stdout[a : b + 1])
-        else:
-            raise HTTPException(500, "Sortie OpenClaw invalide.")
+        try:
+            returncode, stdout, _stderr = await run_agent_process(
+                command, request.is_disconnected,
+                timeout=930, max_output=2 * 1024 * 1024)
+        except AgentTimeout as exc:
+            raise HTTPException(504, "OpenClaw a dépassé le délai maximum.") from exc
+        except AgentDisconnected as exc:
+            raise HTTPException(499, "Client déconnecté.") from exc
+        except AgentOutputLimit as exc:
+            raise HTTPException(502, "Sortie OpenClaw trop volumineuse.") from exc
+        except OSError as exc:
+            LOG.warning("OpenClaw process could not be launched")
+            raise HTTPException(503, "OpenClaw ne peut pas démarrer.") from exc
+    finally:
+        AGENT_SLOTS.release()
+
+    # Logs/errors from the subprocess might contain private content: never
+    # expose stdout/stderr of a failed command in HTTP error details.
+    if returncode:
+        raise HTTPException(502, "OpenClaw a échoué (code de sortie non nul).")
+
+    raw = stdout.decode("utf-8", errors="replace").strip()
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise HTTPException(502, "Réponse JSON OpenClaw invalide.") from exc
 
     def extract(obj):
         if isinstance(obj, dict):
