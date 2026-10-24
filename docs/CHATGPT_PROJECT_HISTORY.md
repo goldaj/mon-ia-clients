@@ -20,3 +20,8 @@
 - Les passages marqués `verbatim` sont des extraits exacts disponibles dans le contexte ; les résumés ne doivent **jamais** être cités comme du dialogue mot pour mot. Aucune réponse complète de l'assistant n'a été inventée.
 - Pour obtenir l'intégralité des questions, réponses et horodatages : intégrer un export authentique des conversations pertinentes ; conserver l'ordre et le rôle des messages, et expurger avant publication les éléments sensibles et hors projet.
 - En intervention future, ajouter en bas les nouveaux dialogues sourcés et les décisions vérifiées, sans effacer les entrées précédentes. Ce journal et `AGENTS.md` sont versionnés dans Git.
+
+## 2026-10-24 : fiabilisation des agents du client mobile
+- **Utilisateur (verbatim, heure indisponible)** : « vas-y avance sur toutes tes propositions », à la suite des propositions sur Jade, Twitch Pokémon et Mon IA Clients et de l'interdiction temporaire de toucher à Hyperliquid.
+- **Assistant (résumé non verbatim)** : résolution du blocage possible par remplissage des pipes stderr/stdout de la commande OpenClaw ; arrêt avec signal de groupe de processus Linux sur déconnexion, annulation ou dépassement ; validation et plafonds de sorties ; tests de sous-processus factices.
+- Aucun OpenClaw réel lancé, aucun VPS ni compte atteint, aucune modification Hyperliquid. Branche isolée `chatgpt/review-20261024`, PR brouillon ; essais sur VPS restant à effectuer.
