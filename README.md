@@ -34,3 +34,27 @@ Prototypage multi-support, intégration d'API, interface conversationnelle, arch
 ## Archives complémentaires
 
 Les itérations Windows v0.1/v0.2 et Mobile v0.1 sont conservées dans `legacy/` à titre de provenance et d’exploration. Elles ne remplacent pas les versions `windows/` et `mobile/`. Les paramètres SSH personnels et les clés restent dans la configuration locale ; les valeurs de connexion par défaut des archives sont vides ou génériques. La compilation et les connexions de ces anciennes versions restent à vérifier.
+
+## Fiabilisation du client mobile (branche de travail)
+
+La route `POST /api/chat/agent` utilise un exécuteur de processus
+asynchrone autonome (`mobile/agent_process.py`) :
+- lecture **concurrente** de stdout et stderr pour éviter les blocages
+  des tampons lorsque l'agent écrit beaucoup ;
+- sorties plafonnées à **2 Mio**, délai maximal **930 s** ;
+- arrêt du processus et de ses descendants Linux si le client se déconnecte,
+  si la requête est annulée ou si le délai/volume est dépassé ;
+- **2 agents concurrents maximum** et attente bornée de 10 s ;
+- messages d'erreur génériques côté navigateur, sans fuite de journaux,
+  transcriptions, commandes ou identifiants privés.
+
+La clé de session est validée (1–80 caractères, lettres ASCII, chiffres,
+tiret ou souligné), et la taille du message agent est bornée à 8192 caractères.
+Les réponses non JSON sont refusées plutôt que de récupérer un fragment
+arbitraire d'une sortie potentiellement corrompue.
+
+Tests hors ligne (processus Python factices, jamais OpenClaw réel) :
+`python -m pip install -r mobile/requirements.txt` puis
+`python -m unittest discover -s tests -v`.
+**Aucun changement déployé sur le VPS** ; vérifier le flux réel OpenClaw et
+la politique Tailscale avant de fusionner.
