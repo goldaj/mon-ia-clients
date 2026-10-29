@@ -25,3 +25,12 @@
 - **Utilisateur (verbatim, heure indisponible)** : « vas-y avance sur toutes tes propositions », à la suite des propositions sur Jade, Twitch Pokémon et Mon IA Clients et de l'interdiction temporaire de toucher à Hyperliquid.
 - **Assistant (résumé non verbatim)** : résolution du blocage possible par remplissage des pipes stderr/stdout de la commande OpenClaw ; arrêt avec signal de groupe de processus Linux sur déconnexion, annulation ou dépassement ; validation et plafonds de sorties ; tests de sous-processus factices.
 - Aucun OpenClaw réel lancé, aucun VPS ni compte atteint, aucune modification Hyperliquid. Branche isolée `chatgpt/review-20261024`, PR brouillon ; essais sur VPS restant à effectuer.
+
+## Intervention 2026-10-29 — sauvegarde locale PWA (résumé non verbatim)
+
+- Demande utilisateur : développer réellement plusieurs dépôts GitHub au fil de la conversation, inspecter les travaux et PR existants, documenter les changements pour Codex. Certains dépôts ont été exclus explicitement pour cette session ; Mon IA Clients n'en fait pas partie.
+- Inspection : branche `main` et PR brouillon #1 sur `chatgpt/review-20261024`, CI parent réussie ; la nouvelle branche `feat/mobile-conversation-backup-20261029` repart de cette branche pour préserver les corrections de sous-processus Agent.
+- Nouvelle fonctionnalité : exporter/importer les historiques PWA en JSON directement dans le navigateur, contrôle strict de schéma et de taille, conservation des conversations existantes, nouveaux IDs et sessions Agent (mémoire serveur **non restaurée**), aucune route de transfert des historiques.
+- Tests JavaScript sous Node et contrôles de structure/syntaxe du frontend embarqué ajoutés au workflow `mobile-tests.yml`. CI et test mobile réel à vérifier avant de déclarer fonctionnel sur téléphone.
+- Confidentialité : le fichier exporté contient le texte en clair ; ne pas le publier ni le mettre en Git. Aucun appareil ni VPS n'a été contacté, pas de nouvelle ouverture réseau.
+- Détail et passation : `docs/MOBILE_HISTORY_BACKUP.md`. Faire une revue de la PR parent avant fusion, tester sous Tailscale avec un historique factice.
