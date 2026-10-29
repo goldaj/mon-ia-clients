@@ -46,3 +46,9 @@ Les entrées de conversation sont bornées ; les messages d'erreur HTTP
 n'exposent plus stderr/stdout OpenClaw ni les détails du backend de chat.
 Le déploiement nécessite une validation des permissions de l'utilisateur
 `ubuntu`, du service systemd et de l'accès privé Tailscale.
+
+## Export / Import hors ligne (branche du 29 octobre 2026)
+
+Le tiroir de conversations contient deux nouveaux boutons : **Exporter JSON** enregistre un fichier local, **Importer JSON** ajoute les conversations validées sans effacer les autres. Limite de 5 Mo par fichier, 200 conversations au total. Les messages en clair peuvent être personnels : conserver le fichier dans un endroit sûr. Aucun upload au service ni synchronisation réseau. Les identifiants d'Agent/OpenClaw ne sont pas réutilisés à la restauration : l'historique reste visible, la mémoire côté serveur n'est pas transférée.
+
+Modules : `conversation_backup.js` et `app.py` ; tests hors ligne `node tests/test_mobile_backup.cjs`, `python -m unittest discover -s tests -v`. Guide de reprise : [docs/MOBILE_HISTORY_BACKUP.md](../docs/MOBILE_HISTORY_BACKUP.md). Pour une vraie PWA, vérifier le téléchargement et l'import avec des données factices dans un environnement Tailscale protégé.

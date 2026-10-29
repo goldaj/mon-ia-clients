@@ -243,8 +243,8 @@ MANIFEST = {
 }
 
 SERVICE_WORKER = r'''
-const CACHE="mon-ia-v1";
-const CORE=["/","/manifest.webmanifest","/icon-192.png","/icon-512.png"];
+const CACHE="mon-ia-v2-history-backup";
+const CORE=["/","/conversation_backup.js","/manifest.webmanifest","/icon-192.png","/icon-512.png"];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE))));
 self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));
 self.addEventListener("fetch",e=>{
@@ -276,7 +276,7 @@ textarea{width:100%;resize:none;min-height:54px;max-height:150px;background:#111
 button.stop{background:#322128}.hidden{display:none!important}.drawer{position:fixed;inset:0;z-index:20;pointer-events:none}.drawer.open{pointer-events:auto}.shade{position:absolute;inset:0;background:#0008;opacity:0;transition:.2s}.drawer.open .shade{opacity:1}
 .panel{position:absolute;left:0;top:0;bottom:0;width:min(86vw,360px);background:#15181e;border-right:1px solid var(--line);transform:translateX(-102%);transition:.2s;display:flex;flex-direction:column;padding:12px}.drawer.open .panel{transform:none}
 .panelhead{display:flex;align-items:center;gap:8px}.panelhead b{flex:1}#convs{overflow:auto;flex:1;margin-top:10px}.conv{padding:11px;border-radius:9px;margin:3px 0;background:#11141a;display:flex;gap:7px;align-items:center}.conv.active{background:#293247}
-.conv span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tiny{border:0;background:transparent;color:var(--muted);padding:4px}.serverbox{border-top:1px solid var(--line);padding-top:10px;font-size:13px;color:var(--muted);line-height:1.6}
+.conv span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tiny{border:0;background:transparent;color:var(--muted);padding:4px}.backupcontrols{display:flex;gap:8px;margin:8px 0}.backupcontrols button{flex:1;background:#293247;border:1px solid var(--line);border-radius:8px;color:var(--text);padding:8px}.serverbox{border-top:1px solid var(--line);padding-top:10px;font-size:13px;color:var(--muted);line-height:1.6}
 </style>
 </head>
 <body>
@@ -285,11 +285,13 @@ button.stop{background:#322128}.hidden{display:none!important}.drawer{position:f
 <main id="chat"></main>
 <footer><textarea id="input" placeholder="Écris ton message…"></textarea><div class="actions"><div class="status" id="status">Connexion…</div><button class="action stop hidden" id="stopBtn">Arrêter</button><button class="action" id="sendBtn">Envoyer</button></div></footer>
 </div>
-<div class="drawer" id="drawer"><div class="shade" id="shade"></div><div class="panel"><div class="panelhead"><b>Conversations</b><button class="iconbtn" id="newBtn">＋</button><button class="iconbtn" id="closeBtn">×</button></div><div id="convs"></div><div class="serverbox" id="serverBox">État serveur…</div></div></div>
+<div class="drawer" id="drawer"><div class="shade" id="shade"></div><div class="panel"><div class="panelhead"><b>Conversations</b><button class="iconbtn" id="newBtn">＋</button><button class="iconbtn" id="closeBtn">×</button></div><div id="convs"></div><div class="backupcontrols"><button id="exportBtn">Exporter JSON</button><button id="importBtn">Importer JSON</button></div><input type="file" id="backupFile" accept="application/json,.json" class="hidden"><div class="serverbox" id="serverBox">État serveur…</div></div></div>
+<script src="/conversation_backup.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const chat=$("chat"),input=$("input"),send=$("sendBtn"),stopBtn=$("stopBtn"),statusEl=$("status"),fastBtn=$("fastBtn"),agentBtn=$("agentBtn"),drawer=$("drawer"),convs=$("convs"),serverBox=$("serverBox");
 let mode="fast",controller=null,started=0,tick=null;
+const backupInput=$("backupFile");
 function uid(){return crypto.randomUUID()}
 let conversations=JSON.parse(localStorage.getItem("mon-ia-conversations")||"null");
 if(!Array.isArray(conversations)){const old=JSON.parse(localStorage.getItem("mobile-ai-messages")||"[]");conversations=[{id:uid(),title:"Nouvelle conversation",mode:"fast",session:"mobile-"+uid().replaceAll("-","").slice(0,24),messages:Array.isArray(old)?old:[]}]}
@@ -311,6 +313,44 @@ async function sendMessage(){const text=input.value.trim(),c=current();if(!text|
 function fmtBytes(v){if(!v)return"0";const u=["o","Ko","Mo","Go"];let i=0;while(v>=1024&&i<u.length-1){v/=1024;i++}return v.toFixed(i>1?1:0)+" "+u[i]}
 function fmtUp(s){s=Math.floor(s||0);const d=Math.floor(s/86400),h=Math.floor((s%86400)/3600),m=Math.floor((s%3600)/60);return d?d+" j "+h+" h":h?h+" h "+m+" min":m+" min"}
 async function refreshStatus(){try{const s=await fetch("/api/status",{cache:"no-store"}).then(r=>r.json());serverBox.innerHTML=`IA ${s.llama?"●":"○"} &nbsp; Agent ${s.openclaw?"●":"○"}<br>RAM ${fmtBytes(s.ram_used)} / ${fmtBytes(s.ram_total)}<br>Swap ${fmtBytes(s.swap_used)} / ${fmtBytes(s.swap_total)}<br>CPU ${s.cpu.toFixed(0)} % • Uptime ${fmtUp(s.uptime)}`;if(!send.disabled)statusEl.textContent=s.llama?"Serveur prêt":"IA indisponible"}catch{serverBox.textContent="Serveur indisponible"}}
+function downloadHistory(){
+  if(send.disabled){alert("Terminez d'abord la génération en cours.");return}
+  try{
+    const documentData=ConversationBackup.createExport(conversations);
+    const blob=new Blob([JSON.stringify(documentData,null,2)],{type:"application/json"});
+    const url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download="mon-ia-conversations-"+new Date().toISOString().slice(0,10)+".json";
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+    statusEl.textContent="Sauvegarde JSON exportée (locale)";
+  }catch(error){alert("Export impossible : "+error.message)}
+}
+async function importHistory(){
+  const file=backupInput.files&&backupInput.files[0];
+  backupInput.value="";
+  if(!file)return;
+  if(send.disabled){alert("Terminez d'abord la génération en cours.");return}
+  if(file.size>5*1024*1024){alert("Sauvegarde trop volumineuse (maximum 5 Mo).");return}
+  try{
+    const imported=ConversationBackup.parseBackup(await file.text());
+    if(!confirm("Importer "+imported.length+" conversation(s) ? Vos conversations actuelles seront conservées. Les sessions Agent repartiront de zéro côté serveur."))return;
+    const newSession=()=>"mobile-"+uid().replaceAll("-","").slice(0,24);
+    const merged=ConversationBackup.mergeImported(conversations,imported,uid,newSession);
+    const oldList=conversations,oldId=currentId;
+    conversations=merged;currentId=merged[0].id;
+    try{saveAll()}
+    catch(error){
+      conversations=oldList;currentId=oldId;
+      try{saveAll()}catch(ignored){}
+      throw new Error("Espace de stockage local insuffisant. Anciennes conversations conservées.");
+    }
+    mode=current().mode;setMode(mode);render();drawer.classList.remove("open");
+    statusEl.textContent=imported.length+" conversation(s) importée(s), sans upload";
+  }catch(error){alert("Import impossible : "+error.message)}
+}
+$("exportBtn").onclick=downloadHistory;
+$("importBtn").onclick=()=>backupInput.click();
+backupInput.onchange=importHistory;
 fastBtn.onclick=()=>setMode("fast");agentBtn.onclick=()=>setMode("agent");send.onclick=sendMessage;stopBtn.onclick=()=>controller?.abort();$("menuBtn").onclick=()=>drawer.classList.add("open");$("shade").onclick=$("closeBtn").onclick=()=>drawer.classList.remove("open");$("newBtn").onclick=newConv;
 input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage()}});
 const c=current();if(c){mode=c.mode||"fast";setMode(mode)}render();refreshStatus();setInterval(refreshStatus,30000);if("serviceWorker"in navigator)navigator.serviceWorker.register("/service-worker.js").catch(()=>{});
@@ -327,6 +367,15 @@ async def index():
 @app.get("/manifest.webmanifest")
 async def manifest():
     return JSONResponse(MANIFEST, media_type="application/manifest+json")
+
+
+@app.get("/conversation_backup.js")
+async def conversation_backup():
+    return Response(
+        Path(__file__).with_name("conversation_backup.js").read_text(encoding="utf-8"),
+        media_type="application/javascript",
+        headers={"Cache-Control": "no-store"},
+    )
 
 
 @app.get("/service-worker.js")
