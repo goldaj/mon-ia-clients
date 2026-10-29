@@ -58,3 +58,9 @@ Tests hors ligne (processus Python factices, jamais OpenClaw réel) :
 `python -m unittest discover -s tests -v`.
 **Aucun changement déployé sur le VPS** ; vérifier le flux réel OpenClaw et
 la politique Tailscale avant de fusionner.
+
+## Sauvegarde portable de l'historique mobile (branche empilée, 29 octobre 2026)
+
+Dans la PWA, menu **Conversations** → **Exporter JSON** ou **Importer JSON**. L'export récupère les conversations locales sous forme de fichier JSON ; l'import valide strictement le fichier, confirme et **ajoute** les conversations sans effacer celles déjà présentes. Les clés de session OpenClaw ne sont pas transportées, les sessions Agent restaurées repartiront de zéro côté serveur. La sauvegarde contient les textes personnels **en clair** : ne pas partager le fichier.
+
+Cette tranche est empilée sur la PR #1 de fiabilisation mobile et ne change pas le client Windows. Lire [docs/MOBILE_HISTORY_BACKUP.md](docs/MOBILE_HISTORY_BACKUP.md) pour les limites, la confidentialité et les tests. Aucun serveur ou appareil n'a été déployé pendant cette intervention.
